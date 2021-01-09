@@ -1,0 +1,51 @@
+#include <Wire.h>
+#include <Adafruit_MotorShield.h>
+#include "utility/Adafruit_MS_PWMServoDriver.h"
+Adafruit_MotorShield AFMS = Adafruit_MotorShield();
+Adafruit_DCMotor *myMotor1 = ADMS.getMotor(1);
+Adafruit_DCMotor *myMotor2 = ADMS.getMotor(2);
+Adafruit_DCMotor *myMotor3 = ADMS.getMotor(3);
+Adafruit_DCMotor *myMotor4 = ADMS.getMotor(4);
+#define lefts A0 // connect the Left sensor with analog pin A0
+#define rights A1 // connect the Right sensor with analog pin A1
+void setup() {
+pinMode(lefts,INPUT); // initilize Left sensor as an input
+pinMode(rights,INPUT); // initilize Right sensor as an input
+AFMS.begin(); // create with the default frequency of 1.6 KHz
+//set default speeds 
+myMotor1 -> setSpeed(50);
+myMotor2 -> setSpeed(50);
+myMotor3 -> setSpeed(50);
+myMotor4 -> setSpeed(50);
+}
+
+void loop() {
+if(analogRead(rights) <= 32 && analogRead(lefts) <=32) // if both sensors read white then tell all motors to go FORWARD
+{
+  myMotor1 -> run(FORWARD);
+  myMotor2 -> run(FORWARD);
+  myMotor3 -> run(FORWARD);
+  myMotor4 -> run(FORWARD);
+}
+else if(!analogRead(rights) <= 32 && analogRead(lefts) <=32) // if right sensor reads black and left sensor reads white, then turn RIGHT
+{
+  myMotor1 -> run(FORWARD);
+  myMotor2 -> run(FORWARD);
+  myMotor3 -> run(BACKWARD);
+  myMotor4 -> run(BACKWARD);
+}
+else if(analogRead(rights) <= 32 && !analogRead(lefts) <=32)  // if right sensor reads white and left sensor reads black, then turn left
+{
+  myMotor1 -> run(BACKWARD);
+  myMotor2 -> run(BACKWARD);
+  myMotor3 -> run(FORWARD);
+  myMotor4 -> run(FORWARD);
+}
+else if(!analogRead(rights) <= 32 && !analogRead(lefts) <=32) // if both black then STOP/RELEASE
+{
+  myMotor1 -> run(RELEASE);
+  myMotor2 -> run(RELEASE);
+  myMotor3 -> run(RELEASE);
+  myMotor4 -> run(RELEASE);
+}
+}
